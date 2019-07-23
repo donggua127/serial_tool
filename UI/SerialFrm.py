@@ -164,7 +164,7 @@ class SerialFrame(object):
         self.frm_left_combobox_databit.pack(fill="both", expand=1, padx=5, pady=5)
         self.frm_left_combobox_stopbit.pack(fill="both", expand=1, padx=5, pady=5)
 
-        self.frm_left_combobox_baudrate.current(3)
+        self.frm_left_combobox_baudrate.current(10)
         self.frm_left_combobox_parity.current(0)
         self.frm_left_combobox_databit.current(3)
         self.frm_left_combobox_stopbit.current(0)

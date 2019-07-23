@@ -77,6 +77,8 @@ class MainFrame(object):
         self.serial_frm.frm_rr_road_list.bind("<Double-Button-1>", self.DelRoad)
         self.serial_frm.frm_rr_sendroad_btn["command"] = self.SendRoadInfo
         self.serial_frm.frm_rr_start_btn["command"] = self.SendStart
+        self.serial_frm.frm_rr_sendroad_btn['state'] = 'disabled'
+        self.serial_frm.frm_rr_start_btn['state'] = 'disabled'
 
     def Toggle(self, event=None):
         '''

@@ -15,7 +15,7 @@ else:
     import glob, os, re
 
 class SerialHelper(object):
-    def __init__(self, Port="COM6", BaudRate="9600", ByteSize="8", Parity="N", Stopbits="1"):
+    def __init__(self, Port="COM6", BaudRate="115200", ByteSize="8", Parity="N", Stopbits="1"):
         '''
         初始化一些参数
         '''

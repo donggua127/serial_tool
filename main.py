@@ -87,8 +87,18 @@ class MainSerialTool(MainFrame):
                 '''
                 for item in os.listdir(path):
                 '''
-                for item in glob.glob(self.route_path+'*.json'):
-                    self.temp_road_file.append(os.path.splitext(os.path.basename(item))[0])
+                route_files_list = glob.glob(self.route_path+'*.json')
+                adjust_files_list = glob.glob(self.adjust_path+'*.json')
+                route_files = list()
+                adjust_files = list()
+                for item in route_files_list:
+                    route_files.append(os.path.splitext(os.path.basename(item))[0])
+                for item in adjust_files_list:
+                    adjust_files.append(os.path.splitext(os.path.basename(item))[0])
+                
+                for item in route_files:
+                    if item in adjust_files:
+                        self.temp_road_file.append(item)
                 for item in self.temp_road_file:
                     if item not in self.serial_roadlist:
                         self.serial_frm.frm_rr_roadfile_list.insert("end", item)
@@ -99,6 +109,7 @@ class MainSerialTool(MainFrame):
                             0, size)).index(item)
                         self.serial_frm.frm_rr_roadfile_list.delete(index)
                 self.serial_roadlist = self.temp_road_file
+
 
             elif platform.system() == "Linux":
                 self.temp_serial = list()
@@ -177,6 +188,8 @@ class MainSerialTool(MainFrame):
             self.serial_frm.frm_left_btn["bg"] = "#008B8B"
             self.serial_frm.frm_status_label["text"] = "Close Serial Successful!"
             self.serial_frm.frm_status_label["fg"] = "#8DEEEE"
+            self.serial_frm.frm_rr_sendroad_btn['state'] = 'disabled'
+            self.serial_frm.frm_rr_start_btn['state'] = 'disabled'
 
     def get_threshold_value(self, *args):
         '''
@@ -237,6 +250,7 @@ class MainSerialTool(MainFrame):
             ajust_dict_list = list()
             if size > 0:
                 files = self.serial_frm.frm_rr_road_list.get(0,size-1)
+                fcnt = 0
                 for f in files:
                     fpath = self.route_path+f+'.json'
                     with open(fpath,'r') as load_f:
@@ -249,9 +263,15 @@ class MainSerialTool(MainFrame):
                         fileStrList = load_f.readlines()
                         for x in fileStrList:
                           ajust_dict_list.append(json.loads(x))
+                          
+                    if fcnt != (size-1):
+                        road_dict_list = road_dict_list[0:-1]
+
+                    fcnt += 1
             else:
                 return
-            
+
+            print(road_dict_list)
             
             length = len(road_dict_list)
 
@@ -326,16 +346,23 @@ class MainSerialTool(MainFrame):
                 self.serial_frm.frm_left_btn["text"] = "Close"
                 self.serial_frm.frm_left_btn["bg"] = "#F08080"
                 self.ser.on_data_received(self.serial_on_data_received)
+                
+                self.serial_frm.frm_rr_sendroad_btn['state'] = 'normal'
+                self.serial_frm.frm_rr_start_btn['state'] = 'normal'
             else:
                 self.serial_frm.frm_status_label["text"] = "Open [{0}] Failed!".format(
                     self.current_serial_str)
                 self.serial_frm.frm_status_label["fg"] = "#DC143C"
+                self.serial_frm.frm_rr_sendroad_btn['state'] = 'disabled'
+                self.serial_frm.frm_rr_start_btn['state'] = 'disabled'
         else:
             self.ser.disconnect()
             self.serial_frm.frm_left_btn["text"] = "Open"
             self.serial_frm.frm_left_btn["bg"] = "#008B8B"
             self.serial_frm.frm_status_label["text"] = "Close Serial Successful!"
             self.serial_frm.frm_status_label["fg"] = "#8DEEEE"
+            self.serial_frm.frm_rr_sendroad_btn['state'] = 'disabled'
+            self.serial_frm.frm_rr_start_btn['state'] = 'disabled'
 
     def serial_on_data_received(self, data):
         '''
