@@ -79,6 +79,7 @@ class MainFrame(object):
         self.serial_frm.frm_rr_start_btn["command"] = self.SendStart
         self.serial_frm.frm_rr_sendroad_btn['state'] = 'disabled'
         self.serial_frm.frm_rr_start_btn['state'] = 'disabled'
+        self.serial_frm.frm_rr_set_btn["command"] = self.set_start_point
 
     def Toggle(self, event=None):
         '''
@@ -103,6 +104,9 @@ class MainFrame(object):
         pass
 
     def DelRoad(self):
+        pass
+
+    def set_start_point(self):
         pass
 
     def SerialClear(self):

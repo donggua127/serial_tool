@@ -64,8 +64,10 @@ class SerialFrame(object):
         '''
         self.frm_rr_road = pytk.PyLabelFrame(self.frm_rr)
         self.frm_rr_btn = pytk.PyLabelFrame(self.frm_rr)
+        self.frm_rr_set = pytk.PyLabelFrame(self.frm_rr)
         self.frm_rr_road.pack(fill="both", expand=1, padx=2, pady=5, side=tk.TOP)
         self.frm_rr_btn.pack(fill="both", expand=0, padx=2, pady=5, side=tk.TOP)
+        self.frm_rr_set.pack(fill="both", expand=0, padx=2, pady=5, side=tk.TOP)
         
         self.frm_rr_roadfile_list = pytk.PyListbox(self.frm_rr_road,
                                                font=g_font)
@@ -94,6 +96,16 @@ class SerialFrame(object):
                                           command=self.SendStart)
         self.frm_rr_sendroad_btn.pack(fill="both", expand=1, padx=5, pady=5, side=tk.LEFT)
         self.frm_rr_start_btn.pack(fill="both", expand=1, padx=5, pady=5,side=tk.LEFT)
+
+        self.frm_rr_entry = pytk.PyEntry(self.frm_rr_set,
+                                         font=g_font)
+        self.frm_rr_entry.insert(0,'0')
+        self.frm_rr_set_btn = pytk.PyButton(self.frm_rr_set,
+                                          text="设定起始点",
+                                          font=g_font,
+                                          command=self.set_start_point)
+        self.frm_rr_entry.pack(fill="both", expand=1, padx=5, pady=5, side=tk.LEFT)
+        self.frm_rr_set_btn.pack(fill="both", expand=0, padx=5, pady=5,side=tk.LEFT)
     def create_frm_left(self):
         '''
         上半部分左边窗口：
@@ -310,6 +322,9 @@ class SerialFrame(object):
 
     def DelRoad(self):
         print('del')
+        pass
+
+    def set_start_point(self):
         pass
 
 if __name__ == '__main__':

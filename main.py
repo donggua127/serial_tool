@@ -102,6 +102,11 @@ class MainSerialTool(MainFrame):
                 for item in self.temp_road_file:
                     if item not in self.serial_roadlist:
                         self.serial_frm.frm_rr_roadfile_list.insert("end", item)
+                        size = self.serial_frm.frm_rr_roadfile_list.size()
+                        if size%2:
+                            self.serial_frm.frm_rr_roadfile_list.itemconfig((size-1),foreground="#FFFF00")
+                        else:
+                            self.serial_frm.frm_rr_roadfile_list.itemconfig((size-1),foreground="#00FFFF")
                 for item in self.serial_roadlist:
                     if item not in self.temp_road_file:
                         size = self.serial_frm.frm_rr_roadfile_list.size()
@@ -265,7 +270,7 @@ class MainSerialTool(MainFrame):
                           ajust_dict_list.append(json.loads(x))
                           
                     if fcnt != (size-1):
-                        road_dict_list = road_dict_list[0:-1]
+                        road_dict_list[-1]['Type'] = '00'                 
 
                     fcnt += 1
             else:
@@ -278,49 +283,49 @@ class MainSerialTool(MainFrame):
             '''
             开始更新路径点
             '''
-            self.ser._serial.write(bytes.fromhex('FFAA0402'))
-            self.ser._serial.write(struct.pack('>H',length))
+            self.serial_write(bytes.fromhex('FFAA0402'))
+            self.serial_write(struct.pack('>H',length))
 
             '''
             发送路径点
             '''
             for item in road_dict_list:
                                             
-                self.ser._serial.write(bytes.fromhex(item['Head']))
-                self.ser._serial.write(bytes.fromhex(item['RFID']))
-                self.ser._serial.write(bytes.fromhex(item['Type']))
-                self.ser._serial.write(bytes.fromhex(item['Flag']))
-                self.ser._serial.write(bytes.fromhex(item['BSec']))
+                self.serial_write(bytes.fromhex(item['Head']))
+                self.serial_write(bytes.fromhex(item['RFID']))
+                self.serial_write(bytes.fromhex(item['Type']))
+                self.serial_write(bytes.fromhex(item['Flag']))
+                self.serial_write(bytes.fromhex(item['BSec']))
 
             '''
             结束更新路径点
             '''
-            self.ser._serial.write(bytes.fromhex('FFAA0404'))
-            self.ser._serial.write(struct.pack('>H',length))
+            self.serial_write(bytes.fromhex('FFAA0404'))
+            self.serial_write(struct.pack('>H',length))
 
             length = len(ajust_dict_list)
 
             '''
             开始更新校准点
             '''
-            self.ser._serial.write(bytes.fromhex('FFAA0405'))
-            self.ser._serial.write(struct.pack('>H',length))
+            self.serial_write(bytes.fromhex('FFAA0405'))
+            self.serial_write(struct.pack('>H',length))
 
             '''
             发送校准点
             '''
             for item in ajust_dict_list:
-                self.ser._serial.write(bytes.fromhex(item['Head']))
-                self.ser._serial.write(bytes.fromhex(item['RFID']))
-                self.ser._serial.write(bytes.fromhex(item['Type']))
-                self.ser._serial.write(bytes.fromhex(item['Flag']))
-                self.ser._serial.write(bytes.fromhex(item['BSec']))
+                self.serial_write(bytes.fromhex(item['Head']))
+                self.serial_write(bytes.fromhex(item['RFID']))
+                self.serial_write(bytes.fromhex(item['Type']))
+                self.serial_write(bytes.fromhex(item['Flag']))
+                self.serial_write(bytes.fromhex(item['BSec']))
 
             '''
             结束更新校准点
             '''
-            self.ser._serial.write(bytes.fromhex('FFAA0407'))
-            self.ser._serial.write(struct.pack('>H',length))
+            self.serial_write(bytes.fromhex('FFAA0407'))
+            self.serial_write(struct.pack('>H',length))
 
             print('Send End')
                                 
@@ -328,10 +333,18 @@ class MainSerialTool(MainFrame):
         except Exception as e:
             logging.error(e)  
         pass
-    
+
+    def serial_write(self,data):
+        self.ser._serial.write(data)
+        
     def SendStart(self):
         self.ser._serial.write(bytes.fromhex('FFAA020A'))
         print('Start')
+
+    def set_start_point(self):
+        dist = int(self.serial_frm.frm_rr_entry.get())
+        self.ser._serial.write(bytes.fromhex('FFAA0601'))
+        self.serial_write(struct.pack('>L',dist))
 
     def serial_on_connected_changed(self, is_connected):
         '''
