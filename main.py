@@ -44,7 +44,7 @@ class MainSerialTool(MainFrame):
         self.root = master
 
         self.serial_receive_count = 0
-        self.serial_recieve_data = ""
+        self.serial_recieve_data = []
         self.serial_listbox = list()
         self.serial_roadlist = list()
         self.routelist = list()
@@ -382,10 +382,10 @@ class MainSerialTool(MainFrame):
         串口接收数据回调函数
         '''
         
-        self.serial_recieve_data += data
+        self.serial_recieve_data.extend(data)
 
         self.serial_recieve_data_hex = binascii.hexlify(
-            bytes(self.serial_recieve_data, "utf-8")).decode("utf-8").upper()
+            bytes(self.serial_recieve_data)).decode("utf-8").upper()
 
 
         
@@ -394,21 +394,26 @@ class MainSerialTool(MainFrame):
             if self.serial_frm.receive_hex_cbtn_var.get() == 1:
                 self.serial_frm.frm_right_receive.insert("end", "[" + str(datetime.datetime.now()) + " - "
                                                          + str(self.serial_receive_count) + "]:\n", "green")
-                data_str = " ".join([hex(ord(x))[2:].upper().rjust(
+                data_str = " ".join([hex(x)[2:].upper().rjust(
                     2, "0") for x in self.serial_recieve_data])
                 logging.info("<<<" + str(data_str))
                 self.serial_frm.frm_right_receive.insert(
                     "end", data_str + "\n")
                 self.serial_frm.frm_right_receive.see("end")
             else:
+                try:
+                    recv_str = bytes(self.serial_recieve_data).decode('utf-8')
+                except Exception as e:
+                    recv_str = "RECV:"+str(len(self.serial_recieve_data))+ str(e)
+
                 self.serial_frm.frm_right_receive.insert("end", "[" + str(datetime.datetime.now()) + " - "
                                                          + str(self.serial_receive_count) + "]:\n", "green")
                 self.serial_frm.frm_right_receive.insert(
-                    "end", self.serial_recieve_data + "\n")
-                logging.info("<<<" + str(self.serial_recieve_data))
+                    "end", recv_str + "\n")
+                logging.info("<<<" + str(recv_str))
                 self.serial_frm.frm_right_receive.see("end")
             self.serial_receive_count += 1
-            self.serial_recieve_data = ""
+            self.serial_recieve_data = []
 
     def find_usb_tty(self, vendor_id=None, product_id=None):
         '''

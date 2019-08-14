@@ -112,13 +112,14 @@ class SerialHelper(object):
                 try:
                     number = self._serial.inWaiting()
                     if number > 0:
-                        data = self._serial.read(number).decode(encoding="utf-8")
+                        data = self._serial.read(number)
                         if data:
                             func(data)
                     time.sleep(0.01)
                 except Exception as e:
                     self._is_connected = False
                     self._serial = None
+                    print(e)
                     break
 
     def find_usb_tty(self, vendor_id=None, product_id=None):
